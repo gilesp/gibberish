@@ -35,10 +35,22 @@ func main() {
 	var order = flag.Int("order", 4, "Length of prefix to use.")
 	var port = flag.String("port", "7070", "Port number to listen on.")
 	var root = flag.String("root", "public_html", "Folder to serve")
+	var splitterFlag = flag.String("splitter", "naive", "Sentence splitter to use. Currently accepts \"naive\" or \"illinois\"")
 	flag.Parse()
 
 	fmt.Printf("Generating chain of order %d using file(s) \"%s\"...\n", *order, *filename)
-	chain := markov.NewChainWithSplitter(*order, markov.NewNaiveSplitter())
+	var splitter markov.Splitter
+	switch string(*splitterFlag) {
+	case "illinois":
+		fmt.Println("Using illinois sentence splitter")
+		splitter = markov.NewIllinoisSplitter()
+	case "naive":
+		fallthrough
+	default:
+		fmt.Println("Using naive sentence splitter")
+		splitter = markov.NewNaiveSplitter()
+	}
+	chain := markov.NewChainWithSplitter(*order, splitter)
 	populateChain(*chain, strings.Split(*filename, ","))
 	chainHandler := &ChainHandler{*chain}
 
