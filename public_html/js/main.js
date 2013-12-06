@@ -19,7 +19,7 @@ function onClose() {
 */
 function loadGibber() {
     $.ajax({
-	url: 'http://localhost:7070/gibberish?max=200',
+	url: "http://" + location.host + "/gibberish?max=200",
 	cache: false,
 	dataType: "json",
 	success: displayGibberish,
